@@ -31,12 +31,17 @@ void SurfaceRemesher::pushButtonComputeClicked()
 	// check input file existence
 	if (!QFile::exists(this->ui->textEdit->toPlainText()))
 	{
+		std::cout << "File not exist!!!" << std::endl;
 		return;
 	}
 
 	// check max size > min size
 	if (this->ui->doubleSpinBoxMaxCellArea < this->ui->doubleSpinBoxMinCellArea)
+	{
+		std::cout << "Max cell area < Min cell area, abort" << std::endl;
 		return;
+	}
+		
 
 	// set output location
 	QString outputFileName = QFileDialog::getSaveFileName(this,
