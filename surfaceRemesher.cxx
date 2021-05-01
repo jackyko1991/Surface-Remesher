@@ -5,12 +5,9 @@
 #include "QFileDialog"
 #include "QFile"
 
-#include "vtkSTLReader.h"
-#include "vtkSmartPointer.h"
-#include "vtkPolyData.h"
-#include "vtkvmtkPolyDataSurfaceRemeshing.h"
-#include "vtkSTLWriter.h"
+#include "iostream"
 
+#include "remesh_core.h"
 
 SurfaceRemesher::SurfaceRemesher()
 {
@@ -54,22 +51,13 @@ void SurfaceRemesher::pushButtonComputeClicked()
 	// lock ui
 	this->enableUi(false);
 
-	// actual computation
-	vtkSmartPointer<vtkSTLReader> reader = vtkSmartPointer<vtkSTLReader>::New();
-	reader->SetFileName(this->ui->textEdit->toPlainText().toStdString().c_str());
-	reader->Update();
-
-	vtkSmartPointer<vtkvmtkPolyDataSurfaceRemeshing> remesher = vtkSmartPointer<vtkvmtkPolyDataSurfaceRemeshing>::New();
-	remesher->SetInputData(reader->GetOutput());
-	remesher->SetMinArea(this->ui->doubleSpinBoxMinCellArea->value());
-	remesher->SetMaxArea(this->ui->doubleSpinBoxMaxCellArea->value());
-	remesher->SetNumberOfIterations(this->ui->spinBoxIterations->value());
-	remesher->Update();
-
-	vtkSmartPointer<vtkSTLWriter> writer = vtkSmartPointer<vtkSTLWriter>::New();
-	writer->SetFileName(outputFileName.toStdString().c_str());
-	writer->SetInputData(remesher->GetOutput());
-	writer->Write();
+	RemeshCore remeshCore;
+	remeshCore.SetInputStlPath(this->ui->textEdit->toPlainText());
+	remeshCore.SetOutputStlPath(outputFileName);
+	remeshCore.SetMinArea(this->ui->doubleSpinBoxMinCellArea->value());
+	remeshCore.SetMaxArea(this->ui->doubleSpinBoxMaxCellArea->value());
+	remeshCore.SetNumberOfIterations(this->ui->spinBoxIterations->value());
+	remeshCore.Run();
 
 	// unlock ui
 	this->enableUi(true);

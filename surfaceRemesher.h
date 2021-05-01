@@ -1,4 +1,4 @@
-#ifndef  SURFACEREMESHER_H
+#ifndef SURFACEREMESHER_H
 #define SURFACEREMESHER_H
 
 #include <QMainWindow>
